@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แจ้งปัญหาเครื่องเสีย</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e0e0e0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-2xl">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">แจ้งปัญหาเครื่องเสีย</h1>
+        <p class="text-center text-gray-600 mb-8">กรุณากรอกรายละเอียดปัญหาเครื่องเสียของคุณด้านล่างนี้</p>
+
+        <form id="issueForm" class="space-y-6">
+            <div>
+                <label for="customerName" class="block text-sm font-medium text-gray-700 mb-1">ชื่อ-นามสกุล:</label>
+                <input type="text" id="customerName" name="customerName" required
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+
+            <div>
+                <label for="contactNumber" class="block text-sm font-medium text-gray-700 mb-1">เบอร์โทรศัพท์:</label>
+                <input type="tel" id="contactNumber" name="contactNumber" required
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">อีเมล:</label>
+                <input type="email" id="email" name="email" required
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+
+            <div>
+                <label for="machineType" class="block text-sm font-medium text-gray-700 mb-1">ประเภทเครื่อง:</label>
+                <select id="machineType" name="machineType" required
+                        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white">
+                    <option value="">-- เลือกประเภทเครื่อง --</option>
+                    <option value="เครื่องซีลมือกด">เครื่องซีลมือกด</option>
+                    <option value="เครื่องซีลสายพานเเนวตั้ง/เเนวนอน">เครื่องซีลสายพานแนวตั้ง/แนวนอน</option>
+                    <option value="เครื่องซีลสูญญากาศ">เครื่องซีลสูญญากาศ</option>
+                    <option value="อื่นๆ">อื่นๆ (โปรดระบุ)</option>
+                </select>
+            </div>
+
+            <div id="otherMachineTypeContainer" class="hidden">
+                <label for="otherMachineType" class="block text-sm font-medium text-gray-700 mb-1">โปรดระบุประเภทเครื่อง:</label>
+                <input type="text" id="otherMachineType" name="otherMachineType"
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+
+            <div>
+                <label for="issueDescription" class="block text-sm font-medium text-gray-700 mb-1">รายละเอียดปัญหา:</label>
+                <textarea id="issueDescription" name="issueDescription" rows="5" required
+                          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
+            </div>
+
+            <div>
+                <label for="attachment" class="block text-sm font-medium text-gray-700 mb-1">แนบรูปภาพ/วิดีโอ (ไม่บังคับ):</label>
+                <input type="file" id="attachment" name="attachment" accept="image/*,video/*"
+                       class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+            </div>
+
+            <button type="submit"
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                ส่งเรื่องแจ้งปัญหา
+            </button>
+        </form>
+
+        <!-- Message Box for notifications -->
+        <div id="messageBox" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+            <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+                <p id="messageText" class="text-lg font-semibold text-gray-800 mb-4"></p>
+                <button id="closeMessage" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    ตกลง
+                </button>
+            </div>
+        </div>
+
+        <!-- Display submitted issues (for demonstration purposes) -->
+        <div id="submittedIssues" class="mt-10 pt-6 border-t border-gray-200 hidden">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">รายการปัญหาที่แจ้งไปแล้ว (ตัวอย่าง)</h2>
+            <div id="issueList" class="space-y-4">
+                <!-- Issues will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const issueForm = document.getElementById('issueForm');
+            const machineTypeSelect = document.getElementById('machineType');
+            const otherMachineTypeContainer = document.getElementById('otherMachineTypeContainer');
+            const otherMachineTypeInput = document.getElementById('otherMachineType');
+            const submittedIssuesContainer = document.getElementById('submittedIssues');
+            const issueList = document.getElementById('issueList');
+            const messageBox = document.getElementById('messageBox');
+            const messageText = document.getElementById('messageText');
+            const closeMessageButton = document.getElementById('closeMessage');
+
+            // Function to show custom message box
+            function showMessageBox(message) {
+                messageText.textContent = message;
+                messageBox.classList.remove('hidden');
+            }
+
+            // Function to hide custom message box
+            closeMessageButton.addEventListener('click', () => {
+                messageBox.classList.add('hidden');
+            });
+
+            // Show/hide "อื่นๆ (โปรดระบุ)" input based on selection
+            machineTypeSelect.addEventListener('change', () => {
+                if (machineTypeSelect.value === 'อื่นๆ') {
+                    otherMachineTypeContainer.classList.remove('hidden');
+                    otherMachineTypeInput.setAttribute('required', 'true');
+                } else {
+                    otherMachineTypeContainer.classList.add('hidden');
+                    otherMachineTypeInput.removeAttribute('required');
+                    otherMachineTypeInput.value = ''; // Clear the input if not "อื่นๆ"
+                }
+            });
+
+            issueForm.addEventListener('submit', (event) => {
+                event.preventDefault(); // Prevent default form submission
+
+                // Collect form data
+                const customerName = document.getElementById('customerName').value;
+                const contactNumber = document.getElementById('contactNumber').value;
+                const email = document.getElementById('email').value;
+                let machineType = machineTypeSelect.value;
+                const issueDescription = document.getElementById('issueDescription').value;
+                const attachment = document.getElementById('attachment').files[0]; // Get the file object
+
+                // If "อื่นๆ" is selected, use the value from the 'otherMachineType' input
+                if (machineType === 'อื่นๆ') {
+                    machineType = otherMachineTypeInput.value || 'ไม่ระบุ'; // Fallback if user selects "อื่นๆ" but doesn't type
+                }
+
+                // Basic validation (form's 'required' attribute handles most of it)
+                if (!customerName || !contactNumber || !email || !machineType || !issueDescription) {
+                    showMessageBox('กรุณากรอกข้อมูลให้ครบถ้วน');
+                    return;
+                }
+
+                // In a real application, you would send this data to a server
+                // using fetch() or XMLHttpRequest. For this example, we'll just display it.
+                console.log('ข้อมูลที่ส่ง:', {
+                    customerName,
+                    contactNumber,
+                    email,
+                    machineType,
+                    issueDescription,
+                    attachment: attachment ? attachment.name : 'ไม่มีไฟล์แนบ'
+                });
+
+                // Display the submitted issue (for demonstration)
+                const newIssueElement = document.createElement('div');
+                newIssueElement.className = 'bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm';
+                newIssueElement.innerHTML = `
+                    <p class="text-gray-900 font-semibold">ชื่อ: ${customerName}</p>
+                    <p class="text-gray-700">เบอร์โทร: ${contactNumber}</p>
+                    <p class="text-gray-700">อีเมล: ${email}</p>
+                    <p class="text-gray-700">ประเภทเครื่อง: ${machineType}</p>
+                    <p class="text-gray-700">ปัญหา: ${issueDescription}</p>
+                    <p class="text-gray-700">ไฟล์แนบ: ${attachment ? attachment.name : 'ไม่มี'}</p>
+                    <p class="text-gray-500 text-sm mt-2">สถานะ: <span class="font-medium text-yellow-600">รอการตรวจสอบ</span></p>
+                `;
+                issueList.prepend(newIssueElement); // Add to the top of the list
+
+                // Show the submitted issues section
+                submittedIssuesContainer.classList.remove('hidden');
+
+                // Clear the form after submission
+                issueForm.reset();
+                otherMachineTypeContainer.classList.add('hidden'); // Hide "อื่นๆ" input
+                otherMachineTypeInput.removeAttribute('required');
+
+                showMessageBox('แจ้งปัญหาสำเร็จ! เราจะติดต่อกลับโดยเร็วที่สุด');
+            });
+        });
+    </script>
+</body>
+</html>
